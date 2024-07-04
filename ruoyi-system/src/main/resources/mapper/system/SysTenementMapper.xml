@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTenementMapper">
+    
+    <resultMap type="SysTenement" id="SysTenementResult">
+        <result property="id"    column="id"    />
+        <result property="identification"    column="identification"    />
+        <result property="image"    column="image"    />
+        <result property="name"    column="name"    />
+        <result property="linkMan"    column="link_man"    />
+        <result property="phone"    column="phone"    />
+        <result property="admin"    column="admin"    />
+        <result property="comment"    column="comment"    />
+    </resultMap>
+
+    <sql id="selectSysTenementVo">
+        select id, identification, image, name, link_man, phone, admin, comment from sys_tenement
+    </sql>
+
+    <select id="selectSysTenementList" parameterType="SysTenement" resultMap="SysTenementResult">
+        <include refid="selectSysTenementVo"/>
+        <where>  
+            <if test="identification != null  and identification != ''"> and identification like concat('%', #{identification}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="linkMan != null  and linkMan != ''"> and link_man like concat('%', #{linkMan}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSysTenementById" parameterType="Long" resultMap="SysTenementResult">
+        <include refid="selectSysTenementVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectIdByName" resultType="java.lang.Long">
+        select id from sys_tenement where name=#{name}
+    </select>
+
+    <insert id="insertSysTenement" parameterType="SysTenement">
+        insert into sys_tenement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="identification != null">identification,</if>
+            <if test="image != null and image != ''">image,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="linkMan != null and linkMan != ''">link_man,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="admin != null and admin != ''">admin,</if>
+            <if test="comment != null">comment,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="identification != null">#{identification},</if>
+            <if test="image != null and image != ''">#{image},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="linkMan != null and linkMan != ''">#{linkMan},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="admin != null and admin != ''">#{admin},</if>
+            <if test="comment != null">#{comment},</if>
+         </trim>
+    </insert>
+    <insert id="insertUserIdAndTenementId" parameterType="SysUserTenement">
+        insert into sys_user_tenement (user_id,tenement_id) values (#{userId},#{tenementId})
+    </insert>
+
+    <update id="updateSysTenement" parameterType="SysTenement">
+        update sys_tenement
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="identification != null">identification = #{identification},</if>
+            <if test="image != null and image != ''">image = #{image},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="linkMan != null and linkMan != ''">link_man = #{linkMan},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="admin != null and admin != ''">admin = #{admin},</if>
+            <if test="comment != null">comment = #{comment},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysTenementById" parameterType="Long">
+        delete from sys_tenement where id = #{id}
+    </delete>
+
+    <delete id="deleteSysTenementByIds" parameterType="String">
+        delete from sys_tenement where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
